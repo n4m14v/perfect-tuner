@@ -226,21 +226,19 @@ body::before {
 .lang-menu-trigger {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-glass);
-  border-radius: 40px;
-  padding: 8px 14px;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
   color: var(--clr-text-muted);
   cursor: pointer;
   transition: all var(--transition);
-  backdrop-filter: blur(10px);
 }
 
 .lang-menu-trigger:hover, .lang-menu-trigger.active {
   color: var(--clr-text);
-  border-color: rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .lang-current-label {

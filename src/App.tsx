@@ -60,7 +60,7 @@ export function App() {
                 <div className="mic-ribbon">⚠️ {t.mic_denied}</div>
             )}
 
-            <header className="aero-header">
+            <header className="aero-header" dir="ltr">
                 <div className="aero-header-left">
                     <h1 className="aero-header-title" style={{ color: instrument.color }}>
                         <span className="logo-word">{t.app_title}</span>
@@ -83,22 +83,14 @@ export function App() {
                         {t.auto_detect}
                     </button>
                     {/* Settings/Mic toggle next to it */}
-                    <label
-                        className={`mic-toggle${isListening ? ' mic-toggle--on' : ''}`}
-                        style={{ '--btn-color': instrument.color, transform: 'scale(0.8)', marginLeft: '8px' } as React.CSSProperties}
+                    <button
+                        className={`mic-icon-btn ${!isListening ? 'mic-off' : ''}`}
+                        style={{ color: isListening ? instrument.color : 'var(--clr-text-muted)' } as React.CSSProperties}
                         aria-label={isListening ? 'Stop listening' : 'Start listening'}
+                        onClick={() => isListening ? stop() : start()}
                     >
-                        <span className="mic-toggle__icon">{isListening ? <Mic size={18} /> : <MicOff size={18} />}</span>
-                        <input
-                            type="checkbox"
-                            className="mic-toggle__input"
-                            checked={isListening}
-                            onChange={() => isListening ? stop() : start()}
-                        />
-                        <div className="mic-toggle__track">
-                            <div className="mic-toggle__thumb"></div>
-                        </div>
-                    </label>
+                        {isListening ? <Mic size={20} /> : <MicOff size={20} />}
+                    </button>
                     <div style={{ marginLeft: '12px' }}>
                         <LanguageSwitcher />
                     </div>

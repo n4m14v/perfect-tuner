@@ -31,25 +31,30 @@
 }
 
 .aero-header-title {
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: clamp(1.2rem, 4vw, 2.5rem);
+    font-weight: 800;
     opacity: 0.9;
     letter-spacing: 0.02em;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     white-space: nowrap;
 }
 
-.logo-word {
-    display: none; /* Hide on very small screens strictly if needed, or just let it scale */
+.mic-icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.3s, color 0.3s;
 }
 
-/* For larger screens we can bring back the logo word */
-@media (min-width: 480px) {
-    .logo-word {
-        display: inline;
-    }
+.mic-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .aero-header-right {
@@ -98,79 +103,22 @@
     padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Glassmorphic Circular Buttons for StringGrid */
-.aero-string-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 20px;
+/* Responsive Grid for Strings in Dock */
+.string-grid-wrap {
     width: 100%;
-    max-width: 220px;
-}
-
-.aero-string-btn {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(12px);
+    max-width: 400px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--clr-text);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-    box-shadow: 
-        0 8px 16px rgba(0, 0, 0, 0.4),
-        inset 0 1px 1px rgba(255, 255, 255, 0.15);
-    position: relative;
+    gap: 12px;
 }
 
-.aero-string-btn:hover {
-    background: rgba(255, 255, 255, 0.06);
-    transform: translateY(-2px);
+.string-grid-main {
+    width: 100%;
 }
 
-.aero-string-btn:active {
-    transform: translateY(2px) scale(0.96);
-    box-shadow: 
-        0 2px 4px rgba(0, 0, 0, 0.3),
-        inset 0 2px 8px rgba(0, 0, 0, 0.5);
-}
-
-.aero-string-btn.active {
-    background: rgba(var(--accent-rgb), 0.15);
-    border-color: var(--btn-color, var(--accent));
-    box-shadow: 
-        0 0 20px rgba(var(--accent-rgb), 0.3),
-        inset 0 0 15px rgba(var(--accent-rgb), 0.2);
-    color: var(--btn-color, var(--accent));
-}
-
-.aero-string-btn .note-name {
-    font-size: 1.5rem;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 2px;
-}
-
-.aero-string-btn .note-octave {
-    font-size: 0.5em;
-    vertical-align: super;
-    opacity: 0.8;
-}
-
-.aero-string-btn .note-freq {
-    font-size: 0.65rem;
-    font-family: var(--font-mono);
-    opacity: 0.6;
-}
-
-.aero-string-btn.active .note-name,
-.aero-string-btn.active .note-freq {
-    opacity: 1;
-    text-shadow: 0 0 10px rgba(var(--accent-rgb), 0.5);
+.string-grid {
+    display: grid;
+    gap: 10px;
 }
 
 /* Dynamic glow radius variable applied to app background */
