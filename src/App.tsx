@@ -6,6 +6,7 @@ import { TunerGauge } from './components/TunerGauge';
 import { InlineInstrumentPicker } from './components/InlineInstrumentPicker';
 import { FreqReadout } from './components/FreqReadout';
 import { Mic, MicOff } from 'lucide-react';
+import './Tuner.css';
 
 export function App() {
     const {
@@ -28,71 +29,84 @@ export function App() {
         status,
     } = useTuner();
 
-    // Compute a dynamic glow color based on status
+    // Compute a dynamic glow color and radius based on status
     const getAppStyle = () => {
-        if (!isListening || isSilent || status === 'idle') return undefined; // Let CSS handle base
         let glowColor = instrument.color; // Defaults to accent
-        if (status === 'low' || status === 'way_low') glowColor = 'var(--clr-low)';
-        if (status === 'high' || status === 'way_high') glowColor = 'var(--clr-high)';
-        if (status === 'perfect') glowColor = 'var(--clr-perfect)';
+        let glowRadius = '20%'; // Default when far or not listening
+
+        if (isListening && !isSilent && status !== 'idle') {
+            if (status === 'low' || status === 'way_low') glowColor = 'var(--clr-low)';
+            if (status === 'high' || status === 'way_high') glowColor = 'var(--clr-high)';
+            if (status === 'perfect') glowColor = 'var(--clr-perfect)';
+
+            if (delta !== null) {
+                const absDelta = Math.min(Math.abs(delta), 30);
+                // When 0 cents -> 60%, when 30 cents -> 20%.
+                const scaled = 60 - (absDelta / 30) * 40;
+                glowRadius = `${scaled}%`;
+            }
+        }
 
         return {
             '--accent': instrument.color,
-            'boxShadow': status === 'perfect' ? `inset 0 0 150px ${glowColor}1A` : undefined
+            '--glow-base': glowColor,
+            '--glow-radius': glowRadius,
         } as React.CSSProperties;
     };
 
     return (
-        <div className="app" style={getAppStyle()}>
+        <div className="aero-mobile-container" style={getAppStyle()}>
             {error === 'mic_denied' && (
                 <div className="mic-ribbon">⚠️ {t.mic_denied}</div>
             )}
 
-            <div className="lang-fixed">
-                {/* Mic Toggle Switch */}
-                <label
-                    className={`mic-toggle${isListening ? ' mic-toggle--on' : ''}`}
-                    style={{ '--btn-color': instrument.color } as React.CSSProperties}
-                    aria-label={isListening ? 'Stop listening' : 'Start listening'}
-                >
-                    <span className="mic-toggle__icon">{isListening ? <Mic size={18} /> : <MicOff size={18} />}</span>
-                    <input
-                        type="checkbox"
-                        className="mic-toggle__input"
-                        checked={isListening}
-                        onChange={() => isListening ? stop() : start()}
-                    />
-                    <div className="mic-toggle__track">
-                        <div className="mic-toggle__thumb"></div>
+            <header className="aero-header">
+                <div className="aero-header-left">
+                    <h1 className="aero-header-title" style={{ color: instrument.color }}>
+                        <span className="logo-word">{t.app_title}</span>
+                        <span className="logo-word" style={{ opacity: 0.3, padding: '0 8px' }}>-</span>
+                        <InlineInstrumentPicker
+                            instrument={instrument}
+                            lang={lang}
+                            onChange={handleInstrumentChange}
+                        />
+                    </h1>
+                </div>
+                <div className="aero-header-right">
+                    <button
+                        className={`auto-pill${autoMode ? ' auto-pill--on' : ''}`}
+                        style={{ '--btn-color': instrument.color, padding: '4px 12px', fontSize: '0.6rem' } as React.CSSProperties}
+                        onClick={() => toggleAuto(!autoMode)}
+                        aria-pressed={autoMode}
+                    >
+                        <span className="auto-pill__dot" />
+                        {t.auto_detect}
+                    </button>
+                    {/* Settings/Mic toggle next to it */}
+                    <label
+                        className={`mic-toggle${isListening ? ' mic-toggle--on' : ''}`}
+                        style={{ '--btn-color': instrument.color, transform: 'scale(0.8)', marginLeft: '8px' } as React.CSSProperties}
+                        aria-label={isListening ? 'Stop listening' : 'Start listening'}
+                    >
+                        <span className="mic-toggle__icon">{isListening ? <Mic size={18} /> : <MicOff size={18} />}</span>
+                        <input
+                            type="checkbox"
+                            className="mic-toggle__input"
+                            checked={isListening}
+                            onChange={() => isListening ? stop() : start()}
+                        />
+                        <div className="mic-toggle__track">
+                            <div className="mic-toggle__thumb"></div>
+                        </div>
+                    </label>
+                    <div style={{ marginLeft: '12px' }}>
+                        <LanguageSwitcher />
                     </div>
-                </label>
-                <LanguageSwitcher />
-            </div>
-
-            <header className="header">
-                <h1 className="logo" style={{ color: instrument.color }}>
-                    <span className="logo-word">{t.app_title}</span>
-                    <span style={{ opacity: 0.3, padding: '0 8px' }}>{t.title_separator}</span>
-                    <InlineInstrumentPicker
-                        instrument={instrument}
-                        lang={lang}
-                        onChange={handleInstrumentChange}
-                    />
-                </h1>
+                </div>
             </header>
 
-            <div className="tuner-core" style={{ borderTopColor: instrument.color }}>
-                <StringGrid
-                    strings={instrument.strings}
-                    activeIdx={activeIdx}
-                    onSelect={selectString}
-                    accentColor={instrument.color}
-                    autoMode={autoMode}
-                    onToggleAuto={toggleAuto}
-                    autoLabel={t.auto_detect}
-                />
-
-                <div className="gauge-area">
+            <main className="aero-stage">
+                <div className="aero-gauge-wrapper">
                     <TunerGauge
                         delta={isSilent ? lastDelta : delta}
                         isPerfect={status === 'perfect'}
@@ -114,11 +128,22 @@ export function App() {
                         t={t}
                         perfectRange={PERFECT_RANGE_CENTS}
                     />
-
                 </div>
-            </div>
+            </main>
 
-            <footer className="footer">{t.footer}</footer>
+            <footer className="aero-control-dock">
+                <StringGrid
+                    strings={instrument.strings}
+                    activeIdx={activeIdx}
+                    onSelect={selectString}
+                    accentColor={instrument.color}
+                />
+
+                {/* Footer text could be embedded or positioned absolute at bottom */}
+                <div style={{ opacity: 0.3, fontSize: '0.65rem', marginTop: '16px', fontFamily: 'var(--font-mono)' }}>
+                    {t.footer}
+                </div>
+            </footer>
         </div>
     );
 }

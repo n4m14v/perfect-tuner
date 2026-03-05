@@ -1,0 +1,189 @@
+/* Tuner.css - Aero-Mobile Pattern Layout */
+
+.aero-mobile-container {
+    display: flex;
+    flex-direction: column;
+    height: 100svh;
+    width: 100vw;
+    overflow: hidden;
+    background: var(--bg-deep);
+    color: var(--clr-text);
+    position: relative;
+    z-index: 1;
+}
+
+/* 1. Header (10%) */
+.aero-header {
+    height: 10svh;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.aero-header-left {
+    display: flex;
+    align-items: center;
+}
+
+.aero-header-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.9;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.logo-word {
+    display: none; /* Hide on very small screens strictly if needed, or just let it scale */
+}
+
+/* For larger screens we can bring back the logo word */
+@media (min-width: 480px) {
+    .logo-word {
+        display: inline;
+    }
+}
+
+.aero-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* 2. The Stage (60%) */
+.aero-stage {
+    height: 60svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 5;
+    /* Antigravity background */
+    background: radial-gradient(circle at 50% 100%, rgba(var(--accent-rgb), 0.05), transparent 70%);
+}
+
+.aero-gauge-wrapper {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Move slightly up so it feels centered overall */
+    transform: translateY(-5%);
+}
+
+/* 3. Control Dock (30%) */
+.aero-control-dock {
+    height: 30svh;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 10px;
+    background: rgba(10, 10, 15, 0.6);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Glassmorphic Circular Buttons for StringGrid */
+.aero-string-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+    width: 100%;
+    max-width: 220px;
+}
+
+.aero-string-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--clr-text);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 
+        0 8px 16px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    position: relative;
+}
+
+.aero-string-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+}
+
+.aero-string-btn:active {
+    transform: translateY(2px) scale(0.96);
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        inset 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.aero-string-btn.active {
+    background: rgba(var(--accent-rgb), 0.15);
+    border-color: var(--btn-color, var(--accent));
+    box-shadow: 
+        0 0 20px rgba(var(--accent-rgb), 0.3),
+        inset 0 0 15px rgba(var(--accent-rgb), 0.2);
+    color: var(--btn-color, var(--accent));
+}
+
+.aero-string-btn .note-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+
+.aero-string-btn .note-octave {
+    font-size: 0.5em;
+    vertical-align: super;
+    opacity: 0.8;
+}
+
+.aero-string-btn .note-freq {
+    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    opacity: 0.6;
+}
+
+.aero-string-btn.active .note-name,
+.aero-string-btn.active .note-freq {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(var(--accent-rgb), 0.5);
+}
+
+/* Dynamic glow radius variable applied to app background */
+.aero-mobile-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+        circle at 50% 40%, 
+        var(--glow-color, rgba(0,240,255, 0.1)) 0%, 
+        transparent var(--glow-radius, 40%)
+    );
+    transition: background 0.3s ease, var(--glow-radius) 0.3s ease;
+    z-index: 0;
+}
