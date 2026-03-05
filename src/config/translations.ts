@@ -62,7 +62,7 @@ const T: Record<Lang, Translations> = {
         gauge_perfect: 'PERFECT',
         gauge_loosen: 'LOOSEN',
         app_title: 'Perfect Tuner',
-        title_separator: ' - ',
+        title_separator: ' | ',
     },
     he: {
         pick_string: 'בחר מיתר להתחיל',
@@ -93,7 +93,7 @@ const T: Record<Lang, Translations> = {
         gauge_perfect: 'מושלם',
         gauge_loosen: 'שחרר',
         app_title: 'מכוון מושלם',
-        title_separator: ' - ',
+        title_separator: ' | ',
     },
     ru: {
         pick_string: 'Выберите струну для начала',
@@ -124,7 +124,7 @@ const T: Record<Lang, Translations> = {
         gauge_perfect: 'ИДЕАЛЬНО',
         gauge_loosen: 'РАССЛАБЬ',
         app_title: 'Идеальный тюнер',
-        title_separator: ' - ',
+        title_separator: ' | ',
     },
 };
 

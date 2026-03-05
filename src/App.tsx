@@ -64,7 +64,7 @@ export function App() {
                 <div className="aero-header-left">
                     <h1 className="aero-header-title" style={{ color: instrument.color }}>
                         <span className="logo-word">{t.app_title}</span>
-                        <span className="logo-word" style={{ opacity: 0.3, padding: '0 8px' }}>-</span>
+                        <span className="logo-word" style={{ opacity: 0.3, padding: '0 8px' }}>{t.title_separator}</span>
                         <InlineInstrumentPicker
                             instrument={instrument}
                             lang={lang}

@@ -170,9 +170,67 @@ export function TunerGauge({
                 <circle cx={CX} cy={CY} r={6} fill={hasSignal ? accentColor : "rgba(255,255,255,0.3)"} style={{ transition: 'fill 0.3s' }} />
 
                 {/* Text Labels */}
-                <text x={CX - 80} y={CY - 40} fill={oLow > 0.5 ? "var(--clr-low)" : "var(--clr-text-muted)"} fontSize={oLow > 0.5 ? "11" : "10"} fontWeight={oLow > 0.5 ? "bold" : "normal"} fontFamily="var(--font-mono)" letterSpacing="0.1em" textAnchor="middle" opacity={oLow > 0.3 ? 1 : 0.5} style={{ filter: oLow > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}>{labelTighten}</text>
-                <text x={CX} y={CY - 60} fill={oPerf > 0.5 ? accentColor : "var(--clr-text-muted)"} fontSize="11" fontWeight="bold" fontFamily="var(--font-mono)" letterSpacing="0.1em" textAnchor="middle" style={{ filter: oPerf > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}>{labelPerfect}</text>
-                <text x={CX + 80} y={CY - 40} fill={oHigh > 0.5 ? "var(--clr-high)" : "var(--clr-text-muted)"} fontSize={oHigh > 0.5 ? "11" : "10"} fontWeight={oHigh > 0.5 ? "bold" : "normal"} fontFamily="var(--font-mono)" letterSpacing="0.1em" textAnchor="middle" opacity={oHigh > 0.3 ? 1 : 0.5} style={{ filter: oHigh > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}>{labelLoosen}</text>
+                <g>
+                    {(() => {
+                        const LABEL_R = (INNER_R + OUTER_R) / 2;
+                        const angleTighten = -48;
+                        const angleLoosen = 48;
+
+                        const ptT = ptG(angleTighten, LABEL_R);
+                        const ptL = ptG(angleLoosen, LABEL_R);
+
+                        return (
+                            <>
+                                <text
+                                    x={ptT.x}
+                                    y={ptT.y}
+                                    transform={`rotate(${angleTighten}, ${ptT.x}, ${ptT.y})`}
+                                    fill={oLow > 0.5 ? "var(--clr-low)" : "var(--clr-text-muted)"}
+                                    fontSize={oLow > 0.5 ? "11" : "10"}
+                                    fontWeight={oLow > 0.5 ? "bold" : "normal"}
+                                    fontFamily="var(--font-mono)"
+                                    letterSpacing="0.1em"
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                    opacity={oLow > 0.3 ? 1 : 0.5}
+                                    style={{ filter: oLow > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
+                                >
+                                    {labelTighten}
+                                </text>
+                                <text
+                                    x={CX}
+                                    y={CY - LABEL_R}
+                                    fill={oPerf > 0.5 ? accentColor : "var(--clr-text-muted)"}
+                                    fontSize="11"
+                                    fontWeight="bold"
+                                    fontFamily="var(--font-mono)"
+                                    letterSpacing="0.1em"
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                    style={{ filter: oPerf > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
+                                >
+                                    {labelPerfect}
+                                </text>
+                                <text
+                                    x={ptL.x}
+                                    y={ptL.y}
+                                    transform={`rotate(${angleLoosen}, ${ptL.x}, ${ptL.y})`}
+                                    fill={oHigh > 0.5 ? "var(--clr-high)" : "var(--clr-text-muted)"}
+                                    fontSize={oHigh > 0.5 ? "11" : "10"}
+                                    fontWeight={oHigh > 0.5 ? "bold" : "normal"}
+                                    fontFamily="var(--font-mono)"
+                                    letterSpacing="0.1em"
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                    opacity={oHigh > 0.3 ? 1 : 0.5}
+                                    style={{ filter: oHigh > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
+                                >
+                                    {labelLoosen}
+                                </text>
+                            </>
+                        );
+                    })()}
+                </g>
             </svg>
         </div>
     );
