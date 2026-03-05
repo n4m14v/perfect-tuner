@@ -135,3 +135,101 @@
     transition: background 0.3s ease, var(--glow-radius) 0.3s ease;
     z-index: 0;
 }
+
+/* 4. Info Modal */
+.info-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 2000;
+    animation: fade-in 0.3s ease;
+}
+
+.info-modal-content {
+    background: #111118;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 400px;
+    padding: 32px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(var(--accent-rgb), 0.1);
+}
+
+.info-modal-close-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.info-modal-title {
+    margin: 0 0 20px 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.info-modal-subtitle {
+    margin: 24px 0 12px 0;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.info-modal-body p {
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+    margin: 12px 0;
+    font-size: 0.95rem;
+}
+
+.info-modal-close-btn {
+    width: 100%;
+    margin-top: 32px;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    color: #000;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.info-modal-close-btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.info-icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.3s, color 0.3s;
+    color: var(--clr-text-muted);
+}
+
+.info-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--clr-text);
+}

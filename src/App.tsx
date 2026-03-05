@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTuner } from './hooks/useTuner';
 import { PERFECT_RANGE_CENTS, WARNING_RANGE_CENTS } from './constants/tuner';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
@@ -5,10 +6,12 @@ import { StringGrid } from './components/StringGrid';
 import { TunerGauge } from './components/TunerGauge';
 import { InlineInstrumentPicker } from './components/InlineInstrumentPicker';
 import { FreqReadout } from './components/FreqReadout';
-import { Mic, MicOff } from 'lucide-react';
+import { Mic, MicOff, Info } from 'lucide-react';
+import { InfoModal } from './components/InfoModal';
 import './Tuner.css';
 
 export function App() {
+    const [isInfoOpen, setIsInfoOpen] = useState(false);
     const {
         lang,
         t,
@@ -82,6 +85,14 @@ export function App() {
                     >
                         {isListening ? <Mic size={20} /> : <MicOff size={20} />}
                     </button>
+                    <button
+                        className="info-icon-btn"
+                        onClick={() => setIsInfoOpen(true)}
+                        aria-label="How to use"
+                        style={{ marginLeft: '12px' }}
+                    >
+                        <Info size={20} />
+                    </button>
                     <div style={{ marginLeft: '12px' }}>
                         <LanguageSwitcher />
                     </div>
@@ -129,6 +140,13 @@ export function App() {
                     {t.footer}
                 </div>
             </footer>
+
+            <InfoModal
+                isOpen={isInfoOpen}
+                onClose={() => setIsInfoOpen(false)}
+                t={t}
+                accentColor={instrument.color}
+            />
         </div>
     );
 }

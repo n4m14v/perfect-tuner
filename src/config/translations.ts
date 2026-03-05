@@ -30,6 +30,13 @@ export interface Translations {
     gauge_loosen: string;
     app_title: string;
     title_separator: string;
+    info_title: string;
+    info_p1: string;
+    info_p2: string;
+    info_p3: string;
+    info_auto_title: string;
+    info_auto_desc: string;
+    info_close: string;
 }
 
 const T: Record<Lang, Translations> = {
@@ -63,6 +70,13 @@ const T: Record<Lang, Translations> = {
         gauge_loosen: 'LOOSEN',
         app_title: 'Perfect Tuner',
         title_separator: ' | ',
+        info_title: 'How to use the Tuner',
+        info_p1: '1. Select the string you want to tune from the bottom dock.',
+        info_p2: '2. Pluck the string on your instrument loudly and clearly.',
+        info_p3: '3. Follow the gauge instructions. If it says "TIGHTEN", carefully turn the tuning peg to raise the pitch. If it says "LOOSEN", turn it the other way to lower it.',
+        info_auto_title: 'Using AUTO Mode',
+        info_auto_desc: 'Tap the glowing center AUTO hub! The app will automatically listen and figure out which string you are trying to tune. You won\'t need to tap the manual string buttons.',
+        info_close: 'Got it!',
     },
     he: {
         pick_string: 'בחר מיתר להתחיל',
@@ -94,6 +108,13 @@ const T: Record<Lang, Translations> = {
         gauge_loosen: 'לשחרר',
         app_title: 'מכוון מושלם',
         title_separator: ' | ',
+        info_title: 'איך להשתמש במכוון',
+        info_p1: '1. בחר איזה מיתר ברצונך לכוון באמצעות הכפתורים למטה.',
+        info_p2: '2. פרוט על המיתר בכלי שלך בקול רם וברור.',
+        info_p3: '3. עקוב אחר הוראות המדחום. אם כתוב "להדק", סובב בזהירות את מפתח הכיוון כדי להעלות את הצליל. אם כתוב "לשחרר", סובב לצד השני.',
+        info_auto_title: 'שימוש במצב AUTO',
+        info_auto_desc: 'הקש על עיגול ה-AUTO באמצע! האפליקציה תקשיב ותזהה אוטומטית איזה מיתר אתה מנסה לכוון, כך שלא תצטרך ללחוץ על הלחצנים ידנית.',
+        info_close: 'הבנתי!',
     },
     ru: {
         pick_string: 'Выберите струну для начала',
@@ -125,6 +146,13 @@ const T: Record<Lang, Translations> = {
         gauge_loosen: 'РАССЛАБЬ',
         app_title: 'Идеальный тюнер',
         title_separator: ' | ',
+        info_title: 'Как использовать тюнер',
+        info_p1: '1. Выберите струну, которую вы хотите настроить, в нижней панели.',
+        info_p2: '2. Сыграйте на струне вашего инструмента громко и четко.',
+        info_p3: '3. Следуйте инструкциям на шкале. Если написано "НАТЯНИ", осторожно поверните колок, чтобы повысить тон. Если "РАССЛАБЬ", поверните в другую сторону.',
+        info_auto_title: 'Режим AUTO',
+        info_auto_desc: 'Нажмите на центральную кнопку AUTO! Приложение будет автоматически слушать и диагностировать, какую струну вы пытаетесь настроить, без ручного переключения.',
+        info_close: 'Понятно!',
     },
 };
 
