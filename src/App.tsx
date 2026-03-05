@@ -73,16 +73,7 @@ export function App() {
                     </h1>
                 </div>
                 <div className="aero-header-right">
-                    <button
-                        className={`auto-pill${autoMode ? ' auto-pill--on' : ''}`}
-                        style={{ '--btn-color': instrument.color, padding: '4px 12px', fontSize: '0.6rem' } as React.CSSProperties}
-                        onClick={() => toggleAuto(!autoMode)}
-                        aria-pressed={autoMode}
-                    >
-                        <span className="auto-pill__dot" />
-                        {t.auto_detect}
-                    </button>
-                    {/* Settings/Mic toggle next to it */}
+                    {/* Mic toggle */}
                     <button
                         className={`mic-icon-btn ${!isListening ? 'mic-off' : ''}`}
                         style={{ color: isListening ? instrument.color : 'var(--clr-text-muted)' } as React.CSSProperties}
@@ -129,6 +120,9 @@ export function App() {
                     activeIdx={activeIdx}
                     onSelect={selectString}
                     accentColor={instrument.color}
+                    autoMode={autoMode}
+                    onToggleAuto={toggleAuto}
+                    autoText={t.auto_detect}
                 />
 
                 {/* Footer text could be embedded or positioned absolute at bottom */}
