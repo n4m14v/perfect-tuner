@@ -172,7 +172,7 @@ export function TunerGauge({
                 {/* Text Labels */}
                 <g>
                     {(() => {
-                        const LABEL_R = (INNER_R + OUTER_R) / 2;
+                        const LABEL_R = INNER_R + 10; // Move closer to inner arc (INNER_R is 90, so this is 100)
                         const angleTighten = -48;
                         const angleLoosen = 48;
 
