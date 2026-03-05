@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { PitchDetector } from 'pitchy';
+import { getCentsDiff } from '../utils/pitchUtils';
 
 const SMOOTH_ALPHA = 0.08;
 const RMS_THRESHOLD = 0.01;
@@ -65,9 +66,9 @@ export function usePitchDetection({ onPitch, onSilence }: UsePitchDetectionOptio
         // and current pitch is suspicious (different from last sustained), ignore it.
         const isDecaying = rms < maxRmsRef.current * 0.6;
         if (isDecaying && lastValidPitchRef.current !== null) {
-            const diff = Math.abs(pitch - lastValidPitchRef.current);
+            const diffCents = Math.abs(getCentsDiff(pitch, lastValidPitchRef.current));
             // If pitch starts jumping around during decay, ignore and hold last valid
-            if (diff > 5) return;
+            if (diffCents > 50) return;
         }
 
         // Asymmetric Smoothing:

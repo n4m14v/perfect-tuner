@@ -3,6 +3,7 @@ import { Translations } from '../config/translations';
 interface Props {
     currentFreq: number;
     targetFreq: number;
+    deltaCents: number;
     isSilent: boolean;
     t: Translations;
     warningRange: number;
@@ -10,11 +11,9 @@ interface Props {
     accentColor: string;
 }
 
-export function FreqReadout({ currentFreq, targetFreq, isSilent, t, warningRange, perfectRange, accentColor }: Props) {
-    const delta = currentFreq - targetFreq;
-
+export function FreqReadout({ currentFreq, targetFreq, deltaCents, isSilent, t, warningRange, perfectRange, accentColor }: Props) {
     // Calculate position for the visual marker (-1 to 1 range, capped at warningRange)
-    const normalizedDelta = Math.max(-1, Math.min(1, delta / warningRange));
+    const normalizedDelta = Math.max(-1, Math.min(1, deltaCents / warningRange));
     // Map -1..1 to 0..100%
     const markerPosition = (normalizedDelta + 1) * 50;
 
@@ -23,12 +22,17 @@ export function FreqReadout({ currentFreq, targetFreq, isSilent, t, warningRange
 
     return (
         <div className={`freq-readout-v2 ${isSilent ? 'freq-readout-v2--stale' : ''}`}>
-            <div className="freq-readout-v2__text">
-                <span className="freq-readout-v2__label">{t.hearing}:</span>
-                <span className="freq-readout-v2__value">{currentFreq.toFixed(1)} Hz</span>
-                <span className="freq-readout-v2__sep">|</span>
-                <span className="freq-readout-v2__label">{t.target}:</span>
-                <span className="freq-readout-v2__value">{targetFreq.toFixed(2)} Hz</span>
+            <div className="freq-readout-v2__grid">
+                <div className="freq-readout-v2__row">
+                    <span className="freq-readout-v2__label">{t.hearing}</span>
+                    <span className="freq-readout-v2__value">{currentFreq.toFixed(1)}</span>
+                    <span className="freq-readout-v2__unit">Hz</span>
+                </div>
+                <div className="freq-readout-v2__row" style={{ opacity: 0.6, fontSize: '0.85em' }}>
+                    <span className="freq-readout-v2__label">{t.target}</span>
+                    <span className="freq-readout-v2__value">{targetFreq.toFixed(1)}</span>
+                    <span className="freq-readout-v2__unit">Hz</span>
+                </div>
             </div>
 
             <div className="freq-readout-v2__bar-wrap">

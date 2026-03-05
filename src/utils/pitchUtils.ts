@@ -32,3 +32,11 @@ export function applyAccent(color: string): void {
     document.documentElement.style.setProperty('--accent-rgb', rgb);
     document.documentElement.style.setProperty('--accent-dim', `rgba(${rgb},0.15)`);
 }
+
+/**
+ * Calculates the difference in cents between two frequencies.
+ * 100 cents = 1 semitone.
+ */
+export function getCentsDiff(freq: number, target: number): number {
+    return 1200 * Math.log2(freq / target);
+}

@@ -1,10 +1,11 @@
 import { useTuner } from './hooks/useTuner';
-import { PERFECT_RANGE, WARNING_RANGE } from './constants/tuner';
+import { PERFECT_RANGE_CENTS, WARNING_RANGE_CENTS } from './constants/tuner';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { StringGrid } from './components/StringGrid';
 import { TunerGauge } from './components/TunerGauge';
 import { InlineInstrumentPicker } from './components/InlineInstrumentPicker';
 import { FreqReadout } from './components/FreqReadout';
+import { Mic, MicOff } from 'lucide-react';
 
 export function App() {
     const {
@@ -27,20 +28,51 @@ export function App() {
         status,
     } = useTuner();
 
+    // Compute a dynamic glow color based on status
+    const getAppStyle = () => {
+        if (!isListening || isSilent || status === 'idle') return undefined; // Let CSS handle base
+        let glowColor = instrument.color; // Defaults to accent
+        if (status === 'low' || status === 'way_low') glowColor = 'var(--clr-low)';
+        if (status === 'high' || status === 'way_high') glowColor = 'var(--clr-high)';
+        if (status === 'perfect') glowColor = 'var(--clr-perfect)';
+
+        return {
+            '--accent': instrument.color,
+            'boxShadow': status === 'perfect' ? `inset 0 0 150px ${glowColor}1A` : undefined
+        } as React.CSSProperties;
+    };
+
     return (
-        <div className="app">
+        <div className="app" style={getAppStyle()}>
             {error === 'mic_denied' && (
                 <div className="mic-ribbon">⚠️ {t.mic_denied}</div>
             )}
 
             <div className="lang-fixed">
+                {/* Mic Toggle Switch */}
+                <label
+                    className={`mic-toggle${isListening ? ' mic-toggle--on' : ''}`}
+                    style={{ '--btn-color': instrument.color } as React.CSSProperties}
+                    aria-label={isListening ? 'Stop listening' : 'Start listening'}
+                >
+                    <span className="mic-toggle__icon">{isListening ? <Mic size={18} /> : <MicOff size={18} />}</span>
+                    <input
+                        type="checkbox"
+                        className="mic-toggle__input"
+                        checked={isListening}
+                        onChange={() => isListening ? stop() : start()}
+                    />
+                    <div className="mic-toggle__track">
+                        <div className="mic-toggle__thumb"></div>
+                    </div>
+                </label>
                 <LanguageSwitcher />
             </div>
 
             <header className="header">
-                <h1 className="logo">
+                <h1 className="logo" style={{ color: instrument.color }}>
                     <span className="logo-word">{t.app_title}</span>
-                    {t.title_separator}
+                    <span style={{ opacity: 0.3, padding: '0 8px' }}>{t.title_separator}</span>
                     <InlineInstrumentPicker
                         instrument={instrument}
                         lang={lang}
@@ -49,12 +81,15 @@ export function App() {
                 </h1>
             </header>
 
-            <div className="tuner-core">
+            <div className="tuner-core" style={{ borderTopColor: instrument.color }}>
                 <StringGrid
                     strings={instrument.strings}
                     activeIdx={activeIdx}
                     onSelect={selectString}
                     accentColor={instrument.color}
+                    autoMode={autoMode}
+                    onToggleAuto={toggleAuto}
+                    autoLabel={t.auto_detect}
                 />
 
                 <div className="gauge-area">
@@ -66,55 +101,24 @@ export function App() {
                         labelTighten={t.gauge_tighten}
                         labelPerfect={t.gauge_perfect}
                         labelLoosen={t.gauge_loosen}
-                        perfectRange={PERFECT_RANGE}
-                        warningRange={WARNING_RANGE}
+                        perfectRange={PERFECT_RANGE_CENTS}
+                        warningRange={WARNING_RANGE_CENTS}
                         isSilent={isSilent}
                     />
 
                     {lastDelta !== null && lastTargetFreq !== null && (
                         <FreqReadout
-                            currentFreq={lastTargetFreq + lastDelta}
+                            currentFreq={lastTargetFreq * Math.pow(2, lastDelta / 1200)}
                             targetFreq={lastTargetFreq}
+                            deltaCents={lastDelta}
                             isSilent={isSilent}
                             t={t}
-                            warningRange={WARNING_RANGE}
-                            perfectRange={PERFECT_RANGE}
+                            warningRange={WARNING_RANGE_CENTS}
+                            perfectRange={PERFECT_RANGE_CENTS}
                             accentColor={instrument.color}
                         />
                     )}
-                </div>
 
-                <div className="controls">
-                    <div className="auto-toggle-wrap">
-                        <label className="toggle-switch">
-                            <input
-                                type="checkbox"
-                                checked={autoMode}
-                                onChange={e => toggleAuto(e.target.checked)}
-                            />
-                            <span className="toggle-track" />
-                        </label>
-                        <span className={`toggle-label${autoMode ? ' on' : ''}`}>
-                            {t.auto_detect}: {autoMode ? t.auto_on : t.auto_off}
-                        </span>
-                    </div>
-
-                    <div className="auto-toggle-wrap">
-                        <label className="toggle-switch">
-                            <input
-                                type="checkbox"
-                                checked={isListening}
-                                onChange={e => {
-                                    if (e.target.checked) start();
-                                    else stop();
-                                }}
-                            />
-                            <span className="toggle-track" />
-                        </label>
-                        <span className={`toggle-label${isListening ? ' on' : ''}`}>
-                            {t.stop}: {isListening ? t.auto_on : t.auto_off}
-                        </span>
-                    </div>
                 </div>
             </div>
 

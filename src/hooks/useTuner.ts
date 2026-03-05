@@ -3,8 +3,8 @@ import { INSTRUMENTS } from '../config/instruments';
 import { useLang } from '../context/LangContext';
 import { useTranslations } from '../config/translations';
 import { usePitchDetection } from './usePitchDetection';
-import { foldToTarget, applyAccent } from '../utils/pitchUtils';
-import { PERFECT_RANGE, PERFECT_EXIT, WARNING_RANGE } from '../constants/tuner';
+import { foldToTarget, applyAccent, getCentsDiff } from '../utils/pitchUtils';
+import { PERFECT_RANGE_CENTS, PERFECT_EXIT_CENTS, WARNING_RANGE_CENTS } from '../constants/tuner';
 import type { Instrument, TunerStatus } from '../types';
 
 export function useTuner() {
@@ -44,14 +44,14 @@ export function useTuner() {
         if (!target) return;
 
         const folded = foldToTarget(rawPitch, target);
-        const d = folded - target;
+        const d = getCentsDiff(folded, target);
         const abs = Math.abs(d);
 
-        // Hysteresis: enter perfect at PERFECT_RANGE, exit only at PERFECT_EXIT
-        if (abs <= PERFECT_RANGE && !inPerfectRef.current) {
+        // Hysteresis: enter perfect at PERFECT_RANGE_CENTS, exit only at PERFECT_EXIT_CENTS
+        if (abs <= PERFECT_RANGE_CENTS && !inPerfectRef.current) {
             inPerfectRef.current = true;
             setIsPerfect(true);
-        } else if (abs > PERFECT_EXIT && inPerfectRef.current) {
+        } else if (abs > PERFECT_EXIT_CENTS && inPerfectRef.current) {
             inPerfectRef.current = false;
             setIsPerfect(false);
         }
@@ -116,6 +116,19 @@ export function useTuner() {
         }
     }, [start]);
 
+    const stopAndReset = useCallback(() => {
+        stop();
+        setAutoMode(false);
+        setActiveIdx(null);
+        setTargetFreq(null);
+        setDelta(null);
+        setLastDelta(null);
+        setLastTargetFreq(null);
+        setIsSilent(true);
+        inPerfectRef.current = false;
+        setIsPerfect(false);
+    }, [stop]);
+
     // Derived status — uses isPerfect (hysteresis) instead of raw delta comparison
     const status: TunerStatus = !isListening
         ? 'idle'
@@ -124,9 +137,9 @@ export function useTuner() {
             : isPerfect
                 ? 'perfect'
                 : (delta !== null && delta < 0)
-                    ? (Math.abs(delta) > WARNING_RANGE ? 'way_low' : 'low')
+                    ? (Math.abs(delta) > WARNING_RANGE_CENTS ? 'way_low' : 'low')
                     : (delta !== null && delta > 0)
-                        ? (Math.abs(delta) > WARNING_RANGE ? 'way_high' : 'high')
+                        ? (Math.abs(delta) > WARNING_RANGE_CENTS ? 'way_high' : 'high')
                         : 'silent';
 
     return {
@@ -145,7 +158,7 @@ export function useTuner() {
         isListening,
         error,
         start,
-        stop,
+        stop: stopAndReset,
         // pitch state
         delta,
         isSilent,
