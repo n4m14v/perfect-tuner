@@ -101,6 +101,8 @@ export function App() {
                         perfectRange={PERFECT_RANGE_CENTS}
                         warningRange={WARNING_RANGE_CENTS}
                         isSilent={isSilent}
+                        autoMode={autoMode}
+                        onToggleAuto={toggleAuto}
                     />
 
                     <FreqReadout
@@ -120,9 +122,6 @@ export function App() {
                     activeIdx={activeIdx}
                     onSelect={selectString}
                     accentColor={instrument.color}
-                    autoMode={autoMode}
-                    onToggleAuto={toggleAuto}
-                    autoText={t.auto_detect}
                 />
 
                 {/* Footer text could be embedded or positioned absolute at bottom */}

@@ -43,6 +43,8 @@ interface Props {
     perfectRange: number;
     warningRange: number;
     isSilent: boolean;
+    autoMode: boolean;
+    onToggleAuto: (val: boolean) => void;
 }
 
 export function TunerGauge({
@@ -56,6 +58,8 @@ export function TunerGauge({
     perfectRange,
     warningRange,
     isSilent,
+    autoMode,
+    onToggleAuto,
 }: Props) {
     const needleAngle = delta !== null ? mapAngle(delta, perfectRange, warningRange) : 0;
     const hasSignal = status !== 'idle' && status !== 'silent';
@@ -165,9 +169,36 @@ export function TunerGauge({
                     />
                 </g>
 
-                {/* Center Hub */}
-                <circle cx={CX} cy={CY} r={16} fill="var(--bg-panel)" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
-                <circle cx={CX} cy={CY} r={6} fill={hasSignal ? accentColor : "rgba(255,255,255,0.3)"} style={{ transition: 'fill 0.3s' }} />
+                {/* Center Hub (Auto-Detect Button) */}
+                <g
+                    className="gauge-center-hub"
+                    onClick={() => onToggleAuto(!autoMode)}
+                    style={{ cursor: 'pointer', pointerEvents: 'all' }}
+                >
+                    <circle
+                        cx={CX}
+                        cy={CY}
+                        r={22}
+                        fill="var(--bg-panel)"
+                        stroke={autoMode ? "rgba(0, 240, 255, 0.6)" : "rgba(255,255,255,0.15)"}
+                        strokeWidth="2"
+                        style={{ filter: autoMode ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
+                    />
+                    <text
+                        x={CX}
+                        y={CY + 1}
+                        fill={autoMode ? "#0ff" : "rgba(255,255,255,0.4)"}
+                        fontSize="9"
+                        fontWeight="bold"
+                        fontFamily="var(--font-mono)"
+                        letterSpacing="0.1em"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        style={{ filter: autoMode ? 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' : 'none', transition: 'all 0.3s' }}
+                    >
+                        AUTO
+                    </text>
+                </g>
 
                 {/* Text Labels */}
                 <g>
