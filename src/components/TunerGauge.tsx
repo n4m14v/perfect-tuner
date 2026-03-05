@@ -79,32 +79,53 @@ export function TunerGauge({
                     </linearGradient>
 
                     {/* Glow filter for active states */}
-                    <filter id="glow-heavy" x="-50%" y="-50%" width="200%" height="200%">
+                    <filter id="glow-heavy" filterUnits="userSpaceOnUse" x="-100" y="-100" width="500" height="500">
                         <feGaussianBlur stdDeviation="12" result="blur" />
                         <feComposite in="SourceGraphic" in2="blur" operator="over" />
                     </filter>
 
-                    {/* Fluid arc gradient (Red -> Accent -> Yellow) */}
-                    <linearGradient id="arc-grad" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="var(--clr-low)" />
-                        <stop offset="50%" stopColor={accentColor} />
-                        <stop offset="100%" stopColor="var(--clr-high)" />
-                    </linearGradient>
+                    {/* Glowing tip */}
                 </defs>
 
-                {/* Base background track */}
-                <path d={sectorLine(-80, 80, OUTER_R)} fill="none" stroke={trackColor} strokeWidth="12" strokeLinecap="round" />
+                {/* Base background track (3 distinct segments) */}
+                <path d={sectorLine(-80, -16, OUTER_R)} fill="none" stroke={trackColor} strokeWidth="12" strokeLinecap="round" />
+                <path d={sectorLine(-10, 10, OUTER_R)} fill="none" stroke={trackColor} strokeWidth="12" strokeLinecap="round" />
+                <path d={sectorLine(16, 80, OUTER_R)} fill="none" stroke={trackColor} strokeWidth="12" strokeLinecap="round" />
+
                 <path d={sectorLine(-80, 80, INNER_R)} fill="none" stroke={trackColor} strokeWidth="2" strokeLinecap="round" />
 
-                {/* Active Colored Band (Fluid gradient) */}
+                {/* Active Colored Segments - Solid context colors */}
+                {/* 1. Low Segment */}
                 <path
-                    d={sectorLine(-80, 80, OUTER_R)}
+                    d={sectorLine(-80, -16, OUTER_R)}
                     fill="none"
-                    stroke="url(#arc-grad)"
+                    stroke="var(--clr-low)"
                     strokeWidth="12"
                     strokeLinecap="round"
-                    opacity={isSilent ? 0.15 : !hasSignal ? 0.3 : 1.0}
-                    style={{ filter: (!isSilent && hasSignal) ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
+                    opacity={oLow}
+                    style={{ filter: (oLow > 0.5 && hasSignal) ? 'url(#glow-heavy)' : 'none', transition: 'opacity 0.3s, filter 0.3s' }}
+                />
+
+                {/* 2. Perfect Segment */}
+                <path
+                    d={sectorLine(-10, 10, OUTER_R)}
+                    fill="none"
+                    stroke={accentColor}
+                    strokeWidth="12"
+                    strokeLinecap="round"
+                    opacity={oPerf}
+                    style={{ filter: (oPerf > 0.5 && hasSignal) ? 'url(#glow-heavy)' : 'none', transition: 'opacity 0.3s, filter 0.3s' }}
+                />
+
+                {/* 3. High Segment */}
+                <path
+                    d={sectorLine(16, 80, OUTER_R)}
+                    fill="none"
+                    stroke="var(--clr-high)"
+                    strokeWidth="12"
+                    strokeLinecap="round"
+                    opacity={oHigh}
+                    style={{ filter: (oHigh > 0.5 && hasSignal) ? 'url(#glow-heavy)' : 'none', transition: 'opacity 0.3s, filter 0.3s' }}
                 />
 
                 {/* Tick marks */}
