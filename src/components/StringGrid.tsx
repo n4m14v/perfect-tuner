@@ -26,6 +26,7 @@ export function StringGrid({ strings, activeIdx, onSelect, accentColor, autoMode
                 <div
                     className="string-grid"
                     style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}
+                    dir="ltr"
                 >
                     {strings.map((s, i) => (
                         <button
