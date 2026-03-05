@@ -106,18 +106,14 @@ export function App() {
                         isSilent={isSilent}
                     />
 
-                    {lastDelta !== null && lastTargetFreq !== null && (
-                        <FreqReadout
-                            currentFreq={lastTargetFreq * Math.pow(2, lastDelta / 1200)}
-                            targetFreq={lastTargetFreq}
-                            deltaCents={lastDelta}
-                            isSilent={isSilent}
-                            t={t}
-                            warningRange={WARNING_RANGE_CENTS}
-                            perfectRange={PERFECT_RANGE_CENTS}
-                            accentColor={instrument.color}
-                        />
-                    )}
+                    <FreqReadout
+                        hearingHz={lastDelta !== null && lastTargetFreq !== null ? lastTargetFreq * Math.pow(2, lastDelta / 1200) : 0}
+                        targetHz={lastTargetFreq ?? (activeIdx !== null ? instrument.strings[activeIdx].freq : instrument.strings[0].freq)}
+                        cents={lastDelta ?? 0}
+                        isSilent={isSilent || lastTargetFreq === null}
+                        t={t}
+                        perfectRange={PERFECT_RANGE_CENTS}
+                    />
 
                 </div>
             </div>

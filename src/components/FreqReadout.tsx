@@ -1,58 +1,109 @@
-import { Translations } from '../config/translations';
+import React, { useMemo } from 'react';
+import type { Translations } from '../config/translations';
 
-interface Props {
-    currentFreq: number;
-    targetFreq: number;
-    deltaCents: number;
+export interface TunerProps {
+    hearingHz: number;
+    targetHz: number;
+    cents: number;
     isSilent: boolean;
     t: Translations;
-    warningRange: number;
     perfectRange: number;
-    accentColor: string;
 }
 
-export function FreqReadout({ currentFreq, targetFreq, deltaCents, isSilent, t, warningRange, perfectRange, accentColor }: Props) {
-    // Calculate position for the visual marker (-1 to 1 range, capped at warningRange)
-    const normalizedDelta = Math.max(-1, Math.min(1, deltaCents / warningRange));
-    // Map -1..1 to 0..100%
-    const markerPosition = (normalizedDelta + 1) * 50;
+export const FreqReadout = React.memo(function FreqReadout({
+    hearingHz,
+    targetHz,
+    cents,
+    isSilent,
+    t,
+    perfectRange
+}: TunerProps) {
+    // Determine state
+    let stateClass = 'perfect';
+    if (cents < -perfectRange) stateClass = 'flat';
+    else if (cents > perfectRange) stateClass = 'sharp';
 
-    // Calculate percentage-based widths for the zones
-    const perfectWidth = (perfectRange / warningRange) * 50;
+    // Clamp visual cents strictly for scale rendering range (-50 to +50)
+    const visualCents = Math.max(-50, Math.min(50, cents));
+
+    const ticks = useMemo(() => {
+        const lines = [];
+        for (let c = -50; c <= 50; c += 2) {
+            const x = c * 4;
+            const isMajor = c % 10 === 0;
+            const isMid = c % 10 === 5 && !isMajor;
+            // Height logic
+            const height = isMajor ? 12 : isMid ? 8 : 5;
+
+            lines.push(
+                <line
+                    key={c}
+                    x1={x} y1={20 - height}
+                    x2={x} y2={20}
+                    stroke="rgba(255,255,255,0.4)"
+                    strokeWidth={isMajor ? 1.5 : 1}
+                />
+            );
+            if (isMajor && c !== 0) {
+                // adding numbers
+                lines.push(
+                    <text
+                        key={`t${c}`}
+                        x={x} y={30}
+                        fill="rgba(255,255,255,0.5)"
+                        fontSize="8"
+                        fontFamily="var(--font-mono)"
+                        textAnchor="middle"
+                        fontWeight="bold"
+                    >
+                        {c > 0 ? `+${c}` : Math.abs(c)}
+                    </text>
+                );
+            }
+        }
+        return lines;
+    }, []);
+
+    // Provide a standardized sign helper
+    const sign = cents > 0 ? '+' : '';
+    const deltaStr = `${sign}${cents.toFixed(1)}`;
 
     return (
-        <div className={`freq-readout-v2 ${isSilent ? 'freq-readout-v2--stale' : ''}`}>
-            <div className="freq-readout-v2__grid">
-                <div className="freq-readout-v2__row">
-                    <span className="freq-readout-v2__label">{t.hearing}</span>
-                    <span className="freq-readout-v2__value">{currentFreq.toFixed(1)}</span>
-                    <span className="freq-readout-v2__unit">Hz</span>
+        <div className={`aero-delta-container state-${stateClass} ${isSilent ? 'is-stale' : ''}`}>
+            {/* Left Wing (Target) */}
+            <div className="aero-wing aero-wing-left">
+                <span className="aero-wing-label">{t.target}</span>
+                <span className="aero-wing-value">{targetHz.toFixed(1)} <small>Hz</small></span>
+            </div>
+
+            {/* Scale Center container */}
+            <div className="aero-center">
+                <div className="aero-delta-text">
+                    <span className="aero-delta-val">{isSilent ? "---" : deltaStr}</span>
                 </div>
-                <div className="freq-readout-v2__row" style={{ opacity: 0.6, fontSize: '0.85em' }}>
-                    <span className="freq-readout-v2__label">{t.target}</span>
-                    <span className="freq-readout-v2__value">{targetFreq.toFixed(1)}</span>
-                    <span className="freq-readout-v2__unit">Hz</span>
+
+                <div className="aero-vernier">
+                    {/* The sliding scale */}
+                    <div
+                        className="aero-vernier-scale"
+                        style={{ transform: `translateX(${-visualCents * 4}px)` }}
+                    >
+                        <svg viewBox="-200 0 400 36" width="400" height="36" preserveAspectRatio="xMidYMid meet">
+                            {ticks}
+                            <polygon points="0,5 -3,0 3,0" fill="rgba(255,255,255,0.8)" />
+                        </svg>
+                    </div>
+
+                    {/* The glowing glass needle in center (static) */}
+                    <div className="aero-vernier-needle" />
                 </div>
             </div>
 
-            <div className="freq-readout-v2__bar-wrap">
-                <div className="freq-readout-v2__bar">
-                    {/* Low Zone */}
-                    <div className="freq-readout-v2__zone freq-readout-v2__zone--low" style={{ width: `${50 - perfectWidth}%` }} />
-                    {/* Perfect Zone */}
-                    <div
-                        className="freq-readout-v2__zone freq-readout-v2__zone--perfect"
-                        style={{ width: `${perfectWidth * 2}%`, backgroundColor: accentColor }}
-                    />
-                    {/* High Zone */}
-                    <div className="freq-readout-v2__zone freq-readout-v2__zone--high" style={{ width: `${50 - perfectWidth}%` }} />
-
-                    <div
-                        className="freq-readout-v2__marker"
-                        style={{ left: `${markerPosition}%` }}
-                    />
-                </div>
+            {/* Right Wing (Hearing) */}
+            <div className="aero-wing aero-wing-right">
+                <span className="aero-wing-label">{t.hearing}</span>
+                <span className="aero-wing-value">{isSilent ? "---" : hearingHz.toFixed(1)} <small>Hz</small></span>
             </div>
         </div>
     );
-}
+});

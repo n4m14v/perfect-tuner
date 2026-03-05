@@ -499,107 +499,142 @@ body::before {
   transition: transform var(--spring);
 }
 
-/* ── Frequency Readout (Digital Meter) ─────────────────── */
-.freq-readout-v2 {
+/* ── Aero-Delta Frequency Cluster ────────────────────────── */
+.aero-delta-container {
+  --flat: var(--clr-low);
+  --sharp: var(--clr-high);
+  --perfect: var(--accent);
+
+  /* Base theme variable we swap based on state */
+  --clr-state: var(--perfect);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 420px;
+  height: 86px;
+  margin-top: 10px; /* Space from the main gauge pivot */
+  margin-bottom: 24px;
+  
+  border-radius: 50px;
+  background: rgba(15, 15, 20, 0.45);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0,0,0,0.8);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 
+      0 20px 40px rgba(0,0,0,0.8), 
+      inset 0 0 20px rgba(0,0,0,0.4),
+      0 0 15px color-mix(in srgb, var(--clr-state) 10%, transparent);
+      
+  padding: 0 24px;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.aero-delta-container.state-flat {
+  --clr-state: var(--flat);
+}
+.aero-delta-container.state-sharp {
+  --clr-state: var(--sharp);
+}
+.aero-delta-container.state-perfect {
+  --clr-state: var(--perfect);
+}
+.aero-delta-container.is-stale {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+.aero-center {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 100%;
+  gap: 2px;
+}
+
+.aero-delta-text {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--clr-state);
+  text-shadow: 0 0 12px var(--clr-state);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.aero-vernier {
   width: 100%;
-  max-width: 280px;
-  margin-top: 12px;
-  padding: 20px;
-  background: linear-gradient(180deg, #121216 0%, #0a0a0c 100%);
-  border: 1px solid #222;
-  border-radius: var(--radius-lg);
-  box-shadow: inset 0 2px 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.4);
-  transition: filter var(--transition), opacity var(--transition);
+  height: 36px;
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
 }
 
-.freq-readout-v2--stale {
-  opacity: 0.6;
-  filter: grayscale(0.8) contrast(0.8);
+.aero-vernier-scale {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 400px;
+  margin-left: -200px;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
-.freq-readout-v2__grid {
+.aero-vernier-needle {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 30px;
+  background: var(--clr-state);
+  box-shadow: 0 0 8px var(--clr-state);
+  transform: translateX(-50%);
+  border-radius: 1px;
+  z-index: 10;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.aero-wing {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  opacity: 0.6;
+  width: 76px;
+  position: relative;
+  z-index: 5;
 }
+.aero-wing-left { align-items: flex-start; }
+.aero-wing-right { align-items: flex-end; }
 
-.freq-readout-v2__row {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: baseline;
-  gap: 12px;
-  width: 100%;
-}
-
-.freq-readout-v2__label {
+.aero-wing-label {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  color: var(--clr-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
-.freq-readout-v2__value {
+.aero-wing-value {
   font-family: var(--font-mono);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--clr-text);
-  letter-spacing: -0.01em;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
-
-.freq-readout-v2__unit {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--clr-text-muted);
-  text-transform: uppercase;
-}
-
-/* Thin neon bar */
-.freq-readout-v2__bar-wrap {
-  width: 100%;
-  height: 4px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 4px;
-  position: relative;
-  overflow: hidden;
-}
-
-.freq-readout-v2__bar {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  display: flex;
-}
-
-.freq-readout-v2__zone {
-  height: 100%;
-  transition: background-color var(--transition);
-}
-.freq-readout-v2__zone--low { background: var(--clr-low); opacity: 0.3; }
-.freq-readout-v2__zone--high { background: var(--clr-high); opacity: 0.3; }
-.freq-readout-v2__zone--perfect { background: var(--clr-perfect); opacity: 0.5; }
-
-/* The actual moving dot indicator */
-.freq-readout-v2__marker {
-  position: absolute;
-  top: 50%;
-  width: 8px;
-  height: 14px;
-  background: #fff;
-  border-radius: 4px;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px #fff;
-  transition: left var(--spring), background-color 0.3s;
-  z-index: 10;
+.aero-wing-value small {
+  font-size: 0.65rem;
+  opacity: 0.7;
 }
 
 /* ── String Grid Wrap (includes auto-detect pill) ──────── */
