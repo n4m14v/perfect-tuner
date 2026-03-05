@@ -79,43 +79,32 @@ export function TunerGauge({
                     </linearGradient>
 
                     {/* Glow filter for active states */}
-                    <filter id="glow-heavy" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur stdDeviation="6" result="blur" />
+                    <filter id="glow-heavy" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="12" result="blur" />
                         <feComposite in="SourceGraphic" in2="blur" operator="over" />
                     </filter>
+
+                    {/* Fluid arc gradient (Red -> Accent -> Yellow) */}
+                    <linearGradient id="arc-grad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="var(--clr-low)" />
+                        <stop offset="50%" stopColor={accentColor} />
+                        <stop offset="100%" stopColor="var(--clr-high)" />
+                    </linearGradient>
                 </defs>
 
                 {/* Base background track */}
-                <path d={sectorLine(-80, 80, OUTER_R)} fill="none" stroke={trackColor} strokeWidth="6" strokeLinecap="round" />
+                <path d={sectorLine(-80, 80, OUTER_R)} fill="none" stroke={trackColor} strokeWidth="12" strokeLinecap="round" />
                 <path d={sectorLine(-80, 80, INNER_R)} fill="none" stroke={trackColor} strokeWidth="2" strokeLinecap="round" />
 
-                {/* Active Colored Bands */}
+                {/* Active Colored Band (Fluid gradient) */}
                 <path
-                    d={sectorLine(-80, -12, OUTER_R)}
+                    d={sectorLine(-80, 80, OUTER_R)}
                     fill="none"
-                    stroke="var(--clr-low)"
-                    strokeWidth="6"
+                    stroke="url(#arc-grad)"
+                    strokeWidth="12"
                     strokeLinecap="round"
-                    opacity={oLow}
-                    style={{ filter: oLow > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
-                />
-                <path
-                    d={sectorLine(-8, 8, OUTER_R)}
-                    fill="none"
-                    stroke={accentColor}
-                    strokeWidth="8"
-                    strokeLinecap="round"
-                    opacity={oPerf}
-                    style={{ filter: oPerf > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
-                />
-                <path
-                    d={sectorLine(12, 80, OUTER_R)}
-                    fill="none"
-                    stroke="var(--clr-high)"
-                    strokeWidth="6"
-                    strokeLinecap="round"
-                    opacity={oHigh}
-                    style={{ filter: oHigh > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
+                    opacity={isSilent ? 0.15 : !hasSignal ? 0.3 : 1.0}
+                    style={{ filter: (!isSilent && hasSignal) ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
                 />
 
                 {/* Tick marks */}
