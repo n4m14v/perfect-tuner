@@ -29,16 +29,16 @@ export function GaugeDefs({ bandOpacities }: GaugeDefsProps) {
             </filter>
 
             <mask id="arc-mask">
-                <g opacity={bandOpacities.low} style={{ transition: 'opacity 0.3s' }}>
+                <g opacity={bandOpacities.low} style={{ transition: 'opacity 0.45s ease-out' }}>
                     <path d={getSectorLine(GAUGE_LOW_START_DEG, GAUGE_LOW_END_DEG, GAUGE_OUTER_RADIUS)} fill="none" stroke="#fff" strokeWidth="12" strokeLinecap="butt" />
                     <circle cx={getGaugePoint(GAUGE_LOW_START_DEG, GAUGE_OUTER_RADIUS).x} cy={getGaugePoint(GAUGE_LOW_START_DEG, GAUGE_OUTER_RADIUS).y} r={6} fill="#fff" />
                 </g>
 
-                <g opacity={bandOpacities.perfect} style={{ transition: 'opacity 0.3s' }}>
+                <g opacity={bandOpacities.perfect} style={{ transition: 'opacity 0.45s ease-out' }}>
                     <path d={getSectorLine(GAUGE_PERFECT_START_DEG, GAUGE_PERFECT_END_DEG, GAUGE_OUTER_RADIUS)} fill="none" stroke="#fff" strokeWidth="12" strokeLinecap="butt" />
                 </g>
 
-                <g opacity={bandOpacities.high} style={{ transition: 'opacity 0.3s' }}>
+                <g opacity={bandOpacities.high} style={{ transition: 'opacity 0.45s ease-out' }}>
                     <path d={getSectorLine(GAUGE_HIGH_START_DEG, GAUGE_HIGH_END_DEG, GAUGE_OUTER_RADIUS)} fill="none" stroke="#fff" strokeWidth="12" strokeLinecap="butt" />
                     <circle cx={getGaugePoint(GAUGE_HIGH_END_DEG, GAUGE_OUTER_RADIUS).x} cy={getGaugePoint(GAUGE_HIGH_END_DEG, GAUGE_OUTER_RADIUS).y} r={6} fill="#fff" />
                 </g>

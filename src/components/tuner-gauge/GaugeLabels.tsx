@@ -28,6 +28,15 @@ export function GaugeLabels({
     const tightenPoint = getGaugePoint(TIGHTEN_ANGLE, LABEL_RADIUS);
     const loosenPoint = getGaugePoint(LOOSEN_ANGLE, LABEL_RADIUS);
 
+    const isRtl = document.documentElement.dir === 'rtl';
+    const renderLabel = (text: string) => {
+        if (!isRtl) return text;
+        return text.split(' ').map(word => word.split('').reverse().join('')).reverse().join(' ');
+    };
+    const rtlStyle: React.CSSProperties = isRtl
+        ? { direction: 'ltr', unicodeBidi: 'bidi-override' }
+        : {};
+
     return (
         <g>
             <text
@@ -42,9 +51,13 @@ export function GaugeLabels({
                 textAnchor="middle"
                 dominantBaseline="middle"
                 opacity={bandOpacities.low > 0.3 ? 1 : 0.5}
-                style={{ filter: bandOpacities.low > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
+                style={{
+                    filter: bandOpacities.low > 0.5 ? 'url(#glow-heavy)' : 'none',
+                    transition: 'fill 0.45s ease-out, opacity 0.45s ease-out, filter 0.45s ease-out, font-size 0.45s ease-out',
+                    ...rtlStyle,
+                }}
             >
-                {labelTighten}
+                {renderLabel(labelTighten)}
             </text>
             <text
                 x={GAUGE_CENTER_X}
@@ -56,9 +69,13 @@ export function GaugeLabels({
                 letterSpacing="0.1em"
                 textAnchor="middle"
                 dominantBaseline="middle"
-                style={{ filter: bandOpacities.perfect > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
+                style={{
+                    filter: bandOpacities.perfect > 0.5 ? 'url(#glow-heavy)' : 'none',
+                    transition: 'fill 0.45s ease-out, opacity 0.45s ease-out, filter 0.45s ease-out',
+                    ...rtlStyle,
+                }}
             >
-                {labelPerfect}
+                {renderLabel(labelPerfect)}
             </text>
             <text
                 x={loosenPoint.x}
@@ -72,9 +89,13 @@ export function GaugeLabels({
                 textAnchor="middle"
                 dominantBaseline="middle"
                 opacity={bandOpacities.high > 0.3 ? 1 : 0.5}
-                style={{ filter: bandOpacities.high > 0.5 ? 'url(#glow-heavy)' : 'none', transition: 'all 0.3s' }}
+                style={{
+                    filter: bandOpacities.high > 0.5 ? 'url(#glow-heavy)' : 'none',
+                    transition: 'fill 0.45s ease-out, opacity 0.45s ease-out, filter 0.45s ease-out, font-size 0.45s ease-out',
+                    ...rtlStyle,
+                }}
             >
-                {labelLoosen}
+                {renderLabel(labelLoosen)}
             </text>
         </g>
     );

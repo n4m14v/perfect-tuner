@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { GaugeArc } from './tuner-gauge/GaugeArc';
 import { GaugeCenterHub } from './tuner-gauge/GaugeCenterHub';
 import { GaugeDefs } from './tuner-gauge/GaugeDefs';
@@ -10,6 +11,8 @@ import {
 import { getGaugeBandOpacities } from './tuner-gauge/getGaugeBandOpacities';
 import { getGaugePoint, getSectorLine, mapNeedleAngle } from './tuner-gauge/geometry';
 import type { TunerGaugeProps } from './tuner-gauge/types';
+
+const BAND_HIGHLIGHT_DELAY_MS = 220;
 
 export function TunerGauge({
     delta,
@@ -25,9 +28,41 @@ export function TunerGauge({
     autoMode,
     onToggleAuto,
 }: TunerGaugeProps) {
+    const bandDelayRef = useRef<number | null>(null);
+    const [visualBandState, setVisualBandState] = useState({
+        status,
+        isPerfect,
+        isSilent,
+    });
+
+    useEffect(() => {
+        if (bandDelayRef.current !== null) {
+            window.clearTimeout(bandDelayRef.current);
+        }
+
+        bandDelayRef.current = window.setTimeout(() => {
+            setVisualBandState({
+                status,
+                isPerfect,
+                isSilent,
+            });
+        }, BAND_HIGHLIGHT_DELAY_MS);
+
+        return () => {
+            if (bandDelayRef.current !== null) {
+                window.clearTimeout(bandDelayRef.current);
+                bandDelayRef.current = null;
+            }
+        };
+    }, [isPerfect, isSilent, status]);
+
     const needleAngle = delta !== null ? mapNeedleAngle(delta, perfectRange, warningRange) : 0;
     const hasSignal = status !== 'idle' && status !== 'silent';
-    const bandOpacities = getGaugeBandOpacities(status, isPerfect, isSilent);
+    const bandOpacities = getGaugeBandOpacities(
+        visualBandState.status,
+        visualBandState.isPerfect,
+        visualBandState.isSilent,
+    );
     const trackColor = 'rgba(255,255,255,0.05)';
 
     return (

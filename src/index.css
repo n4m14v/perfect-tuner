@@ -522,10 +522,6 @@ body::before {
   backface-visibility: hidden;
 }
 
-[dir="rtl"] .gauge-svg text {
-  direction: rtl;
-}
-
 .gauge-needle-group {
   transition: transform var(--spring);
   will-change: transform;
