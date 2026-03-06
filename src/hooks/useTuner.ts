@@ -3,8 +3,11 @@ import { INSTRUMENTS } from '../config/instruments';
 import { useLang } from '../context/LangContext';
 import { useTranslations } from '../config/translations';
 import { usePitchDetection } from './usePitchDetection';
-import { foldToTarget, applyAccent, getCentsDiff } from '../utils/pitchUtils';
-import { PERFECT_RANGE_CENTS, PERFECT_EXIT_CENTS, WARNING_RANGE_CENTS } from '../constants/tuner';
+import { applyAccent } from '../utils/colorUtils';
+import { foldToTarget, getCentsDiff } from '../utils/pitchMath';
+import { selectClosestString } from '../utils/tuner/selectClosestString';
+import { getTunerStatus } from '../utils/tuner/getTunerStatus';
+import { PERFECT_RANGE_CENTS, PERFECT_EXIT_CENTS } from '../constants/tuner';
 import type { Instrument, TunerStatus } from '../types';
 
 export function useTuner() {
@@ -28,13 +31,7 @@ export function useTuner() {
     const handlePitch = useCallback((rawPitch: number) => {
         let target: number | null = null;
         if (autoMode) {
-            let bestIdx = 0;
-            let bestDist = Infinity;
-            instrument.strings.forEach((s, i) => {
-                const folded = foldToTarget(rawPitch, s.freq);
-                const dist = Math.abs(folded - s.freq);
-                if (dist < bestDist) { bestDist = dist; bestIdx = i; }
-            });
+            const bestIdx = selectClosestString(instrument.strings, rawPitch);
             target = instrument.strings[bestIdx].freq;
             setActiveIdx(bestIdx);
             setTargetFreq(target);
@@ -82,8 +79,7 @@ export function useTuner() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleInstrumentChange = useCallback((inst: Instrument) => {
-        setInstrument(inst);
+    const resetPitchState = useCallback(() => {
         setActiveIdx(null);
         setTargetFreq(null);
         setDelta(null);
@@ -92,9 +88,14 @@ export function useTuner() {
         setIsSilent(true);
         inPerfectRef.current = false;
         setIsPerfect(false);
+    }, []);
+
+    const handleInstrumentChange = useCallback((inst: Instrument) => {
+        setInstrument(inst);
+        resetPitchState();
         applyAccent(inst.color);
         if (!autoMode) stop();
-    }, [autoMode, stop]);
+    }, [autoMode, resetPitchState, stop]);
 
     const selectString = useCallback(async (idx: number) => {
         setAutoMode(false);
@@ -119,28 +120,15 @@ export function useTuner() {
     const stopAndReset = useCallback(() => {
         stop();
         setAutoMode(false);
-        setActiveIdx(null);
-        setTargetFreq(null);
-        setDelta(null);
-        setLastDelta(null);
-        setLastTargetFreq(null);
-        setIsSilent(true);
-        inPerfectRef.current = false;
-        setIsPerfect(false);
-    }, [stop]);
+        resetPitchState();
+    }, [resetPitchState, stop]);
 
-    // Derived status — uses isPerfect (hysteresis) instead of raw delta comparison
-    const status: TunerStatus = !isListening
-        ? 'idle'
-        : isSilent
-            ? 'silent'
-            : isPerfect
-                ? 'perfect'
-                : (delta !== null && delta < 0)
-                    ? (Math.abs(delta) > WARNING_RANGE_CENTS ? 'way_low' : 'low')
-                    : (delta !== null && delta > 0)
-                        ? (Math.abs(delta) > WARNING_RANGE_CENTS ? 'way_high' : 'high')
-                        : 'silent';
+    const status: TunerStatus = getTunerStatus({
+        isListening,
+        isSilent,
+        isPerfect,
+        delta,
+    });
 
     return {
         // i18n

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useTuner } from './hooks/useTuner';
 import { PERFECT_RANGE_CENTS, WARNING_RANGE_CENTS } from './constants/tuner';
+import { useAppGlowStyle } from './hooks/useAppGlowStyle';
+import { getDetectedFrequency } from './utils/pitchMath';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { StringGrid } from './components/StringGrid';
 import { TunerGauge } from './components/TunerGauge';
@@ -31,34 +33,16 @@ export function App() {
         lastTargetFreq,
         status,
     } = useTuner();
-
-    // Compute a dynamic glow color and radius based on status
-    const getAppStyle = () => {
-        let glowColor = instrument.color; // Defaults to accent
-        let glowRadius = '20%'; // Default when far or not listening
-
-        if (isListening && !isSilent && status !== 'idle') {
-            if (status === 'low' || status === 'way_low') glowColor = 'var(--clr-low)';
-            if (status === 'high' || status === 'way_high') glowColor = 'var(--clr-high)';
-            if (status === 'perfect') glowColor = 'var(--clr-perfect)';
-
-            if (delta !== null) {
-                const absDelta = Math.min(Math.abs(delta), 30);
-                // When 0 cents -> 60%, when 30 cents -> 20%.
-                const scaled = 60 - (absDelta / 30) * 40;
-                glowRadius = `${scaled}%`;
-            }
-        }
-
-        return {
-            '--accent': instrument.color,
-            '--glow-base': glowColor,
-            '--glow-radius': glowRadius,
-        } as React.CSSProperties;
-    };
+    const appStyle = useAppGlowStyle({
+        accentColor: instrument.color,
+        delta,
+        isListening,
+        isSilent,
+        status,
+    });
 
     return (
-        <div className="aero-mobile-container" style={getAppStyle()}>
+        <div className="aero-mobile-container" style={appStyle}>
             {error === 'mic_denied' && (
                 <div className="mic-ribbon">⚠️ {t.mic_denied}</div>
             )}
@@ -117,7 +101,7 @@ export function App() {
                     />
 
                     <FreqReadout
-                        hearingHz={lastDelta !== null && lastTargetFreq !== null ? lastTargetFreq * Math.pow(2, lastDelta / 1200) : 0}
+                        hearingHz={lastDelta !== null && lastTargetFreq !== null ? getDetectedFrequency(lastTargetFreq, lastDelta) : 0}
                         targetHz={lastTargetFreq ?? (activeIdx !== null ? instrument.strings[activeIdx].freq : instrument.strings[0].freq)}
                         cents={lastDelta ?? 0}
                         isSilent={isSilent || lastTargetFreq === null}

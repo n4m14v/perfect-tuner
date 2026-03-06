@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { PitchDetector } from 'pitchy';
-import { getCentsDiff } from '../utils/pitchUtils';
+import { getCentsDiff } from '../utils/pitchMath';
 
 const SMOOTH_ALPHA = 0.08;
 const RMS_THRESHOLD = 0.01;
