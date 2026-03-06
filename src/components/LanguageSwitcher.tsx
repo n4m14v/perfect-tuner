@@ -8,7 +8,11 @@ const LANGS: { code: Lang; label: string; full: string }[] = [
     { code: 'ru', label: 'РУ', full: 'Русский' },
 ];
 
-export function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+    onLanguageSelect?: () => void;
+}
+
+export function LanguageSwitcher({ onLanguageSelect }: LanguageSwitcherProps) {
     const { lang, setLang } = useLang();
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -47,6 +51,7 @@ export function LanguageSwitcher() {
                             onClick={() => {
                                 setLang(code);
                                 setIsOpen(false);
+                                onLanguageSelect?.();
                             }}
                         >
                             <span className="lang-option-label">{label}</span>

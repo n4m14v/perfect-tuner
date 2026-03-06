@@ -85,7 +85,7 @@ export function App() {
                             <span className="mobile-only-text">{t.info_button || 'Info'}</span>
                         </button>
                         <div className="lang-switcher-wrapper">
-                            <LanguageSwitcher />
+                            <LanguageSwitcher onLanguageSelect={() => setIsMobileMenuOpen(false)} />
                         </div>
                     </div>
                 </div>
