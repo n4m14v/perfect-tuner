@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Dark background with rounded corners so the neon always pops -->
+  <rect width="512" height="512" rx="112" fill="#121212"/>
+  
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#glow)">
+    <!-- Broken Circle (Neon ring) -->
+    <path d="M 290 134 A 150 150 0 1 1 222 134" fill="none" stroke="#00ffff" stroke-width="24" stroke-linecap="round"/>
+    
+    <!-- Central Pointer (Guitar pick tapering into thin needle) -->
+    <path d="M 252 80 Q 256 70 260 80 L 272 360 A 16 16 0 0 1 240 360 Z" fill="#00ffff"/>
+    
+    <!-- Top Perfect Arc -->
+    <path d="M 226 50 Q 256 36 286 50" fill="none" stroke="#00ffff" stroke-width="20" stroke-linecap="round"/>
+  </g>
+
+  <!-- Inner solid bright core to make the neon effect pop -->
+  <g>
+    <!-- Broken Circle Core -->
+    <path d="M 290 134 A 150 150 0 1 1 222 134" fill="none" stroke="#e0ffff" stroke-width="6" stroke-linecap="round"/>
+    
+    <!-- Central Pointer Core -->
+    <path d="M 252 80 Q 256 70 260 80 L 272 360 A 16 16 0 0 1 240 360 Z" fill="#e0ffff"/>
+    
+    <!-- Top Perfect Arc Core -->
+    <path d="M 226 50 Q 256 36 286 50" fill="none" stroke="#e0ffff" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>

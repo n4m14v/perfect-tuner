@@ -8,7 +8,7 @@ import { StringGrid } from './components/StringGrid';
 import { TunerGauge } from './components/TunerGauge';
 import { InlineInstrumentPicker } from './components/InlineInstrumentPicker';
 import { FreqReadout } from './components/FreqReadout';
-import { Mic, MicOff, Info } from 'lucide-react';
+import { Mic, MicOff, Info, AlertOctagon } from 'lucide-react';
 import { InfoModal } from './components/InfoModal';
 import './Tuner.css';
 
@@ -44,7 +44,10 @@ export function App() {
     return (
         <div className="aero-mobile-container" style={appStyle}>
             {error === 'mic_denied' && (
-                <div className="mic-ribbon">⚠️ {t.mic_denied}</div>
+                <div className="mic-ribbon" role="alert">
+                    <AlertOctagon size={16} strokeWidth={2.5} />
+                    <span>{t.mic_denied}</span>
+                </div>
             )}
 
             <header className="aero-header" dir="ltr">
