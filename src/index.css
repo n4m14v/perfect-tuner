@@ -14,13 +14,13 @@
   --bg-panel: rgba(20, 20, 25, 0.4);
   
   /* Accents */
-  --accent: #00f0ff;          /* Cyan base */
-  --accent-rgb: 0, 240, 255;
-  --accent-glow: rgba(0, 240, 255, 0.15);
+  --accent: #0ea5e9;          /* Professional Sky Blue */
+  --accent-rgb: 14, 165, 233;
+  --accent-glow: rgba(14, 165, 233, 0.15);
   
-  --clr-low: #ff2a5f;         /* Neon Pink/Red */
-  --clr-high: #ff9e00;        /* Neon Orange */
-  --clr-perfect: #00ff88;     /* Emerald Green */
+  --clr-low: #f43f5e;         /* Refined Rose/Red */
+  --clr-high: #f59e0b;        /* Refined Amber */
+  --clr-perfect: #10b981;     /* Refined Emerald */
   
   --clr-text: #f0f0f5;
   --clr-text-muted: #808090;

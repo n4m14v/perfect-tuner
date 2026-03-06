@@ -5,7 +5,6 @@ const CY = 155; // Slightly higher to fit better
 const INNER_R = 90;
 const OUTER_R = 120;
 const NEEDLE_LEN = 110;
-const TICK_R = 125;
 
 function mapAngle(delta: number, perfectCents: number, outerCents: number): number {
     const abs = Math.abs(delta);
@@ -88,66 +87,53 @@ export function TunerGauge({
                         <feComposite in="SourceGraphic" in2="blur" operator="over" />
                     </filter>
 
-                    {/* Glowing tip */}
-                </defs>
+                    {/* Single unified mask defining the continuous arc without gaps */}
+                    <mask id="arc-mask">
+                        {/* 1. Low Segment (Left) */}
+                        <g opacity={oLow} style={{ transition: 'opacity 0.3s' }}>
+                            <path d={sectorLine(-80, -10, OUTER_R)} fill="none" stroke="#fff" strokeWidth="12" strokeLinecap="butt" />
+                            <circle cx={ptG(-80, OUTER_R).x} cy={ptG(-80, OUTER_R).y} r={6} fill="#fff" />
+                        </g>
 
-                {/* Base background track (3 distinct segments) */}
-                <path d={sectorLine(-80, -16, OUTER_R)} fill="none" stroke={trackColor} strokeWidth="12" strokeLinecap="round" />
-                <path d={sectorLine(-10, 10, OUTER_R)} fill="none" stroke={trackColor} strokeWidth="12" strokeLinecap="round" />
-                <path d={sectorLine(16, 80, OUTER_R)} fill="none" stroke={trackColor} strokeWidth="12" strokeLinecap="round" />
+                        {/* 2. Perfect Segment (Center) */}
+                        <g opacity={oPerf} style={{ transition: 'opacity 0.3s' }}>
+                            <path d={sectorLine(-10, 10, OUTER_R)} fill="none" stroke="#fff" strokeWidth="12" strokeLinecap="butt" />
+                        </g>
+
+                        {/* 3. High Segment (Right) */}
+                        <g opacity={oHigh} style={{ transition: 'opacity 0.3s' }}>
+                            <path d={sectorLine(10, 80, OUTER_R)} fill="none" stroke="#fff" strokeWidth="12" strokeLinecap="butt" />
+                            <circle cx={ptG(80, OUTER_R).x} cy={ptG(80, OUTER_R).y} r={6} fill="#fff" />
+                        </g>
+                    </mask>
+                </defs>
 
                 <path d={sectorLine(-80, 80, INNER_R)} fill="none" stroke={trackColor} strokeWidth="2" strokeLinecap="round" />
 
-                {/* Active Colored Segments - Solid context colors */}
-                {/* 1. Low Segment */}
-                <path
-                    d={sectorLine(-80, -16, OUTER_R)}
-                    fill="none"
-                    stroke="var(--clr-low)"
-                    strokeWidth="12"
-                    strokeLinecap="round"
-                    opacity={oLow}
-                    style={{ filter: (oLow > 0.5 && hasSignal) ? 'url(#glow-heavy)' : 'none', transition: 'opacity 0.3s, filter 0.3s' }}
-                />
+                {/* Single Continuous Gradient Arc globally masked by the active segments */}
+                <g style={{ filter: hasSignal ? 'url(#glow-heavy)' : 'none', transition: 'filter 0.3s' }}>
+                    <foreignObject x="0" y="0" width="300" height="180" mask="url(#arc-mask)">
+                        <div style={{ width: '100%', height: '100%', background: `conic-gradient(from 0deg at 150px 155px, ${accentColor} 0deg, var(--clr-high) 80deg, var(--clr-high) 100deg, transparent 100deg 260deg, var(--clr-low) 260deg, var(--clr-low) 280deg, ${accentColor} 360deg)` }} />
+                    </foreignObject>
+                </g>
 
-                {/* 2. Perfect Segment */}
-                <path
-                    d={sectorLine(-10, 10, OUTER_R)}
-                    fill="none"
-                    stroke={accentColor}
-                    strokeWidth="12"
-                    strokeLinecap="round"
-                    opacity={oPerf}
-                    style={{ filter: (oPerf > 0.5 && hasSignal) ? 'url(#glow-heavy)' : 'none', transition: 'opacity 0.3s, filter 0.3s' }}
-                />
-
-                {/* 3. High Segment */}
-                <path
-                    d={sectorLine(16, 80, OUTER_R)}
-                    fill="none"
-                    stroke="var(--clr-high)"
-                    strokeWidth="12"
-                    strokeLinecap="round"
-                    opacity={oHigh}
-                    style={{ filter: (oHigh > 0.5 && hasSignal) ? 'url(#glow-heavy)' : 'none', transition: 'opacity 0.3s, filter 0.3s' }}
-                />
-
-                {/* Tick marks */}
-                {[-60, -40, -20, 0, 20, 40, 60].map(angle => {
-                    const i = ptG(angle, TICK_R);
-                    const o = ptG(angle, TICK_R + 6);
-                    const isCenter = angle === 0;
-                    return (
-                        <line
-                            key={angle}
-                            x1={i.x.toFixed(2)} y1={i.y.toFixed(2)}
-                            x2={o.x.toFixed(2)} y2={o.y.toFixed(2)}
-                            stroke={isCenter ? accentColor : 'rgba(255,255,255,0.2)'}
-                            strokeWidth={isCenter ? 3 : 2}
-                            strokeLinecap="round"
-                        />
-                    );
-                })}
+                {/* Boundary markers separating the segments visually */}
+                <g>
+                    {[-10, 10].map(angle => {
+                        const i = ptG(angle, OUTER_R - 5);
+                        const o = ptG(angle, OUTER_R + 5);
+                        return (
+                            <line
+                                key={angle}
+                                x1={i.x.toFixed(2)} y1={i.y.toFixed(2)}
+                                x2={o.x.toFixed(2)} y2={o.y.toFixed(2)}
+                                stroke="rgba(255,255,255,0.1)"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                            />
+                        );
+                    })}
+                </g>
 
                 {/* Needle */}
                 <g className="gauge-needle-group" style={{ transform: `rotate(${needleAngle}deg)`, transformOrigin: `${CX}px ${CY}px` }}>
