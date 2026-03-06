@@ -53,7 +53,7 @@ export function GaugeLabels({
                 opacity={bandOpacities.low > 0.3 ? 1 : 0.5}
                 style={{
                     filter: bandOpacities.low > 0.5 ? 'url(#glow-heavy)' : 'none',
-                    transition: 'fill 0.45s ease-out, opacity 0.45s ease-out, filter 0.45s ease-out, font-size 0.45s ease-out',
+                    transition: 'fill 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out, font-size 0.3s ease-out',
                     ...rtlStyle,
                 }}
             >
@@ -71,7 +71,7 @@ export function GaugeLabels({
                 dominantBaseline="middle"
                 style={{
                     filter: bandOpacities.perfect > 0.5 ? 'url(#glow-heavy)' : 'none',
-                    transition: 'fill 0.45s ease-out, opacity 0.45s ease-out, filter 0.45s ease-out',
+                    transition: 'fill 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out',
                     ...rtlStyle,
                 }}
             >
@@ -91,7 +91,7 @@ export function GaugeLabels({
                 opacity={bandOpacities.high > 0.3 ? 1 : 0.5}
                 style={{
                     filter: bandOpacities.high > 0.5 ? 'url(#glow-heavy)' : 'none',
-                    transition: 'fill 0.45s ease-out, opacity 0.45s ease-out, filter 0.45s ease-out, font-size 0.45s ease-out',
+                    transition: 'fill 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out, font-size 0.3s ease-out',
                     ...rtlStyle,
                 }}
             >

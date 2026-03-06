@@ -12,7 +12,7 @@ import { getGaugeBandOpacities } from './tuner-gauge/getGaugeBandOpacities';
 import { getGaugePoint, getSectorLine, mapNeedleAngle } from './tuner-gauge/geometry';
 import type { TunerGaugeProps } from './tuner-gauge/types';
 
-const BAND_HIGHLIGHT_DELAY_MS = 220;
+const BAND_HIGHLIGHT_DELAY_MS = 120;
 
 export function TunerGauge({
     delta,
@@ -38,6 +38,18 @@ export function TunerGauge({
     useEffect(() => {
         if (bandDelayRef.current !== null) {
             window.clearTimeout(bandDelayRef.current);
+            bandDelayRef.current = null;
+        }
+
+        const nextBandState = {
+            status,
+            isPerfect,
+            isSilent,
+        };
+
+        if (!isSilent && status !== 'idle') {
+            setVisualBandState(nextBandState);
+            return;
         }
 
         bandDelayRef.current = window.setTimeout(() => {

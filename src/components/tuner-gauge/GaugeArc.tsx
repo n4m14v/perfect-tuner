@@ -5,7 +5,7 @@ interface GaugeArcProps {
 
 export function GaugeArc({ accentColor, hasSignal }: GaugeArcProps) {
     return (
-        <g style={{ filter: hasSignal ? 'url(#glow-heavy)' : 'none', transition: 'filter 0.45s ease-out' }}>
+        <g style={{ filter: hasSignal ? 'url(#glow-heavy)' : 'none', transition: 'filter 0.3s ease-out' }}>
             <foreignObject x="0" y="0" width="300" height="180" mask="url(#arc-mask)">
                 <div
                     style={{
