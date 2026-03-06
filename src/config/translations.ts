@@ -37,6 +37,7 @@ export interface Translations {
     info_auto_title: string;
     info_auto_desc: string;
     info_close: string;
+    info_button: string;
 }
 
 const T: Record<Lang, Translations> = {
@@ -77,6 +78,7 @@ const T: Record<Lang, Translations> = {
         info_auto_title: 'Using AUTO Mode',
         info_auto_desc: 'Tap the glowing center AUTO hub! The app will automatically listen and figure out which string you are trying to tune. You won\'t need to tap the manual string buttons.',
         info_close: 'Got it!',
+        info_button: 'Info',
     },
     he: {
         pick_string: 'בחר מיתר להתחיל',
@@ -115,6 +117,7 @@ const T: Record<Lang, Translations> = {
         info_auto_title: 'שימוש במצב AUTO',
         info_auto_desc: 'הקש על עיגול ה-AUTO באמצע! האפליקציה תקשיב ותזהה אוטומטית איזה מיתר אתה מנסה לכוון, כך שלא תצטרך ללחוץ על הלחצנים ידנית.',
         info_close: 'הבנתי!',
+        info_button: 'מידע',
     },
     ru: {
         pick_string: 'Выберите струну для начала',
@@ -153,6 +156,7 @@ const T: Record<Lang, Translations> = {
         info_auto_title: 'Режим AUTO',
         info_auto_desc: 'Нажмите на центральную кнопку AUTO! Приложение будет автоматически слушать и диагностировать, какую струну вы пытаетесь настроить, без ручного переключения.',
         info_close: 'Понятно!',
+        info_button: 'Информация',
     },
 };
 

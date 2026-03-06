@@ -56,6 +56,15 @@ export function App() {
                     </h1>
                 </div>
                 <div className="aero-header-right">
+                    {/* Mic toggle */}
+                    <button
+                        className={`mic-icon-btn ${!isListening ? 'mic-off' : ''}`}
+                        style={{ color: isListening ? instrument.color : 'var(--clr-text-muted)' } as React.CSSProperties}
+                        aria-label={isListening ? 'Stop listening' : 'Start listening'}
+                        onClick={() => isListening ? stop() : start()}
+                    >
+                        {isListening ? <Mic size={20} /> : <MicOff size={20} />}
+                    </button>
                     <button
                         className="mobile-menu-btn"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -64,30 +73,18 @@ export function App() {
                         <Menu size={24} />
                     </button>
                     <div className={`header-actions-container ${isMobileMenuOpen ? 'open' : ''}`}>
-                        {/* Mic toggle */}
-                        <button
-                            className={`mic-icon-btn ${!isListening ? 'mic-off' : ''}`}
-                            style={{ color: isListening ? instrument.color : 'var(--clr-text-muted)' } as React.CSSProperties}
-                            aria-label={isListening ? 'Stop listening' : 'Start listening'}
-                            onClick={() => {
-                                isListening ? stop() : start();
-                                setIsMobileMenuOpen(false);
-                            }}
-                        >
-                            {isListening ? <Mic size={20} /> : <MicOff size={20} />}
-                        </button>
                         <button
                             className="info-icon-btn"
                             onClick={() => {
                                 setIsInfoOpen(true);
                                 setIsMobileMenuOpen(false);
                             }}
-                            aria-label="How to use"
-                            style={{ marginLeft: '12px' }}
+                            aria-label={t.info_button || "How to use"}
                         >
                             <Info size={20} />
+                            <span className="mobile-only-text">{t.info_button || 'Info'}</span>
                         </button>
-                        <div style={{ marginLeft: '12px' }}>
+                        <div className="lang-switcher-wrapper">
                             <LanguageSwitcher />
                         </div>
                     </div>
