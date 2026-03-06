@@ -10,6 +10,8 @@
     color: var(--clr-text);
     position: relative;
     z-index: 1;
+    isolation: isolate;
+    contain: layout paint style;
 }
 
 /* 1. Header (10%) */
@@ -61,6 +63,58 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    position: relative;
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--clr-text);
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.header-actions-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .mobile-menu-btn {
+        display: flex;
+    }
+    
+    .header-actions-container {
+        display: none;
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: rgba(20, 20, 25, 0.95);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 16px 20px;
+        flex-direction: column;
+        align-items: flex-end;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(var(--accent-rgb), 0.15);
+        z-index: 1000;
+        gap: 20px;
+    }
+    
+    .header-actions-container.open {
+        display: flex;
+        animation: fade-in 0.2s ease;
+    }
 }
 
 /* 2. The Stage (60%) */
@@ -74,6 +128,7 @@
     z-index: 5;
     /* Antigravity background */
     background: radial-gradient(circle at 50% 100%, rgba(var(--accent-rgb), 0.05), transparent 70%);
+    contain: layout paint;
 }
 
 .aero-gauge-wrapper {
@@ -83,7 +138,8 @@
     flex-direction: column;
     align-items: center;
     /* Move slightly up so it feels centered overall */
-    transform: translateY(-5%);
+    will-change: transform;
+    transform: translate3d(0, -5%, 0);
 }
 
 /* 3. Control Dock (30%) */
@@ -101,6 +157,7 @@
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
     z-index: 10;
     padding-bottom: env(safe-area-inset-bottom);
+    contain: layout paint;
 }
 
 /* Responsive Grid for Strings in Dock */
@@ -121,21 +178,6 @@
     gap: 10px;
 }
 
-/* Dynamic glow radius variable applied to app background */
-.aero-mobile-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(
-        circle at 50% 40%, 
-        var(--glow-color, rgba(0,240,255, 0.1)) 0%, 
-        transparent var(--glow-radius, 40%)
-    );
-    transition: background 0.3s ease, var(--glow-radius) 0.3s ease;
-    z-index: 0;
-}
-
 /* 4. Info Modal */
 .info-modal-overlay {
     position: fixed;
@@ -148,6 +190,8 @@
     padding: 20px;
     z-index: 2000;
     animation: fade-in 0.3s ease;
+    will-change: opacity;
+    contain: paint;
 }
 
 .info-modal-content {
@@ -159,6 +203,9 @@
     padding: 32px;
     position: relative;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(var(--accent-rgb), 0.1);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform, opacity;
 }
 
 .info-modal-close-icon {
@@ -204,6 +251,7 @@
     font-size: 1rem;
     cursor: pointer;
     transition: transform 0.2s, opacity 0.2s;
+    will-change: transform, opacity;
 }
 
 .info-modal-close-btn:active {
@@ -227,6 +275,7 @@
     border-radius: 50%;
     transition: background 0.3s, color 0.3s;
     color: var(--clr-text-muted);
+    transform: translateZ(0);
 }
 
 .info-icon-btn:hover {

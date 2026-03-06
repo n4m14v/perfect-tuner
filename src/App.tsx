@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { useTuner } from './hooks/useTuner';
 import { PERFECT_RANGE_CENTS, WARNING_RANGE_CENTS } from './constants/tuner';
-import { useAppGlowStyle } from './hooks/useAppGlowStyle';
 import { getDetectedFrequency } from './utils/pitchMath';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { StringGrid } from './components/StringGrid';
 import { TunerGauge } from './components/TunerGauge';
 import { InlineInstrumentPicker } from './components/InlineInstrumentPicker';
 import { FreqReadout } from './components/FreqReadout';
-import { Mic, MicOff, Info, AlertOctagon } from 'lucide-react';
+import { Mic, MicOff, Info, AlertOctagon, Menu } from 'lucide-react';
 import { InfoModal } from './components/InfoModal';
 import './Tuner.css';
 
 export function App() {
     const [isInfoOpen, setIsInfoOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const {
         lang,
         t,
@@ -33,16 +33,9 @@ export function App() {
         lastTargetFreq,
         status,
     } = useTuner();
-    const appStyle = useAppGlowStyle({
-        accentColor: instrument.color,
-        delta,
-        isListening,
-        isSilent,
-        status,
-    });
 
     return (
-        <div className="aero-mobile-container" style={appStyle}>
+        <div className="aero-mobile-container">
             {error === 'mic_denied' && (
                 <div className="mic-ribbon" role="alert">
                     <AlertOctagon size={16} strokeWidth={2.5} />
@@ -63,25 +56,40 @@ export function App() {
                     </h1>
                 </div>
                 <div className="aero-header-right">
-                    {/* Mic toggle */}
                     <button
-                        className={`mic-icon-btn ${!isListening ? 'mic-off' : ''}`}
-                        style={{ color: isListening ? instrument.color : 'var(--clr-text-muted)' } as React.CSSProperties}
-                        aria-label={isListening ? 'Stop listening' : 'Start listening'}
-                        onClick={() => isListening ? stop() : start()}
+                        className="mobile-menu-btn"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        aria-label="Toggle menu"
                     >
-                        {isListening ? <Mic size={20} /> : <MicOff size={20} />}
+                        <Menu size={24} />
                     </button>
-                    <button
-                        className="info-icon-btn"
-                        onClick={() => setIsInfoOpen(true)}
-                        aria-label="How to use"
-                        style={{ marginLeft: '12px' }}
-                    >
-                        <Info size={20} />
-                    </button>
-                    <div style={{ marginLeft: '12px' }}>
-                        <LanguageSwitcher />
+                    <div className={`header-actions-container ${isMobileMenuOpen ? 'open' : ''}`}>
+                        {/* Mic toggle */}
+                        <button
+                            className={`mic-icon-btn ${!isListening ? 'mic-off' : ''}`}
+                            style={{ color: isListening ? instrument.color : 'var(--clr-text-muted)' } as React.CSSProperties}
+                            aria-label={isListening ? 'Stop listening' : 'Start listening'}
+                            onClick={() => {
+                                isListening ? stop() : start();
+                                setIsMobileMenuOpen(false);
+                            }}
+                        >
+                            {isListening ? <Mic size={20} /> : <MicOff size={20} />}
+                        </button>
+                        <button
+                            className="info-icon-btn"
+                            onClick={() => {
+                                setIsInfoOpen(true);
+                                setIsMobileMenuOpen(false);
+                            }}
+                            aria-label="How to use"
+                            style={{ marginLeft: '12px' }}
+                        >
+                            <Info size={20} />
+                        </button>
+                        <div style={{ marginLeft: '12px' }}>
+                            <LanguageSwitcher />
+                        </div>
                     </div>
                 </div>
             </header>

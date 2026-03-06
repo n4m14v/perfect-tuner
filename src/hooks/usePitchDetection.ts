@@ -20,6 +20,7 @@ export function usePitchDetection({ onPitch, onSilence }: UsePitchDetectionOptio
     const rafRef = useRef<number | null>(null);
     const smoothedRef = useRef<number | null>(null);
     const detectorRef = useRef<PitchDetector<Float32Array> | null>(null);
+    const timeDomainBufferRef = useRef<Float32Array | null>(null);
     const maxRmsRef = useRef<number>(0);
     const lastValidPitchRef = useRef<number | null>(null);
 
@@ -37,8 +38,9 @@ export function usePitchDetection({ onPitch, onSilence }: UsePitchDetectionOptio
         rafRef.current = requestAnimationFrame(analyse);
 
         const analyser = analyserRef.current;
-        const buf = new Float32Array(analyser.fftSize);
-        analyser.getFloatTimeDomainData(buf);
+        const buf = timeDomainBufferRef.current;
+        if (!buf || buf.length !== analyser.fftSize) return;
+        analyser.getFloatTimeDomainData(buf as Float32Array<ArrayBuffer>);
 
         // RMS silence gate
         let rms = 0;
@@ -102,7 +104,15 @@ export function usePitchDetection({ onPitch, onSilence }: UsePitchDetectionOptio
             return;
         }
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    channelCount: 1,
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false,
+                },
+                video: false,
+            });
             streamRef.current = stream;
 
             const ctx = new AudioContext();
@@ -110,10 +120,10 @@ export function usePitchDetection({ onPitch, onSilence }: UsePitchDetectionOptio
 
             const analyser = ctx.createAnalyser();
             analyser.fftSize = FFT_SIZE;
-            analyser.smoothingTimeConstant = 0.3;
             analyserRef.current = analyser;
 
             detectorRef.current = PitchDetector.forFloat32Array(FFT_SIZE);
+            timeDomainBufferRef.current = new Float32Array(FFT_SIZE);
 
             const source = ctx.createMediaStreamSource(stream);
             source.connect(analyser);
@@ -141,6 +151,7 @@ export function usePitchDetection({ onPitch, onSilence }: UsePitchDetectionOptio
         audioCtxRef.current = null;
         analyserRef.current = null;
         detectorRef.current = null;
+        timeDomainBufferRef.current = null;
         smoothedRef.current = null;
         maxRmsRef.current = 0;
         lastValidPitchRef.current = null;

@@ -31,7 +31,7 @@ export function useTuner() {
     const handlePitch = useCallback((rawPitch: number) => {
         let target: number | null = null;
         if (autoMode) {
-            const bestIdx = selectClosestString(instrument.strings, rawPitch);
+            const bestIdx = selectClosestString(instrument.strings, rawPitch, activeIdx);
             target = instrument.strings[bestIdx].freq;
             setActiveIdx(bestIdx);
             setTargetFreq(target);
@@ -57,7 +57,7 @@ export function useTuner() {
         setLastDelta(d);
         setLastTargetFreq(target);
         setIsSilent(false);
-    }, [autoMode, instrument.strings, targetFreq]);
+    }, [activeIdx, autoMode, instrument.strings, targetFreq]);
 
     const handleSilence = useCallback(() => {
         setIsSilent(true);

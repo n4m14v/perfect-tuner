@@ -86,7 +86,7 @@ export const FreqReadout = React.memo(function FreqReadout({
                     {/* The sliding scale */}
                     <div
                         className="aero-vernier-scale"
-                        style={{ transform: `translateX(${-visualCents * 4}px)` }}
+                        style={{ transform: `translate3d(${-visualCents * 4}px, 0, 0)` }}
                     >
                         <svg viewBox="-200 0 400 36" width="400" height="36" preserveAspectRatio="xMidYMid meet">
                             {ticks}
